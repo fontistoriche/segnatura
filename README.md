@@ -106,6 +106,31 @@ manual override is applied:
 book = extract("book.epub", edition_profile="book.segnatura.json")
 ```
 
+## Validation
+
+Segnatura was evaluated in two separate controlled experiments on Italian
+corpora.
+
+**Classification accuracy.** One hundred blocks from ten EPUB files were
+labelled by hand against the rendered original, with Segnatura's prediction
+hidden during annotation. The production category matched the human label in
+45 of 50 random-audit cases and 48 of 50 targeted challenge cases: 93 of 100
+overall, with 99.65% character-weighted accuracy. The targeted cases were
+deliberately difficult, so the combined result is a regression benchmark on a
+limited set of Italian EPUBs and publishers, not an estimate for every EPUB.
+
+**Effect on retrieval.** The full evaluation used 50 EPUB files and 300
+questions: 240 local questions, 30 questions requiring sources from different
+parts of the corpus, and 30 negative controls. With identical fixed chunking,
+embedding, and retrieval settings, Segnatura reduced searchable records by
+5.61% and indexed tokens by 6.33% compared with a document-level keyword
+filter that already excluded front matter, contents, indexes, and
+bibliographies. Across the 240 local questions, no paired difference in
+retrieval of the registered sources was statistically significant at the
+conventional 0.05 level. These results establish a smaller index at unchanged
+retrieval quality on this corpus.
+
+
 ## Command line
 
 ```console
