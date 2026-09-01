@@ -10,6 +10,9 @@ readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
+authors = [
+  { name = "Maximilian Ventura" }
+]
 keywords = ["epub", "text-extraction", "rag", "citations", "ebook"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -21,6 +24,12 @@ dependencies = []
 
 [project.optional-dependencies]
 tools = ["Flask>=3.0,<4"]
+
+[project.urls]
+Homepage = "https://github.com/fontistoriche/segnatura"
+Repository = "https://github.com/fontistoriche/segnatura"
+Issues = "https://github.com/fontistoriche/segnatura/issues"
+Changelog = "https://github.com/fontistoriche/segnatura/blob/main/CHANGELOG.md"
 
 [project.scripts]
 segnatura = "segnatura.cli:main"
