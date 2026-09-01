@@ -121,14 +121,19 @@ limited set of Italian EPUBs and publishers, not an estimate for every EPUB.
 
 **Effect on retrieval.** The full evaluation used 50 EPUB files and 300
 questions: 240 local questions, 30 questions requiring sources from different
-parts of the corpus, and 30 negative controls. With identical fixed chunking,
-embedding, and retrieval settings, Segnatura reduced searchable records by
-5.61% and indexed tokens by 6.33% compared with a document-level keyword
-filter that already excluded front matter, contents, indexes, and
-bibliographies. Across the 240 local questions, no paired difference in
-retrieval of the registered sources was statistically significant at the
-conventional 0.05 level. These results establish a smaller index at unchanged
-retrieval quality on this corpus.
+parts of the corpus, and 30 negative controls. Both indexes were configured to
+search work text only. The document-level baseline already excluded entire
+files identified as front matter, contents, indexes, or bibliographies, but
+could not separate different editorial functions within the same document.
+Segnatura produced a cleaner work-text extraction by identifying notes,
+bibliographies, indexes, and paratext that the baseline would have mixed into
+the work text, while preserving that material under separate editorial
+categories. With identical fixed chunking, embedding, and retrieval settings,
+the resulting work-text index contained 5.61% fewer searchable records and
+6.33% fewer indexed tokens. Across the 240 local questions, no paired
+difference in retrieval of the registered sources was statistically significant
+at the conventional 0.05 level. These results establish a cleaner, smaller
+work-text index at unchanged retrieval quality on this corpus.
 
 
 ## Command line
