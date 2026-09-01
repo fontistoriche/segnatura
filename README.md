@@ -12,20 +12,21 @@ exact-edition Edition Profile affect a later extraction.
 
 ## Install
 
-Segnatura requires Python 3.10 or newer.
+Segnatura requires Python 3.10 or newer and has no required runtime dependency
+outside the Python standard library.
 
 ```console
-python -m pip install .
+python -m pip install segnatura
 ```
-
-Run this command from the repository root. Segnatura has no required runtime
-dependency outside the Python standard library.
 
 Install the local browser tool as well:
 
 ```console
-python -m pip install ".[tools]"
+python -m pip install "segnatura[tools]"
 ```
+
+To install from a clone of this repository instead, run the same commands from
+the repository root with `.` in place of the package name.
 
 ## Quick start
 
@@ -160,7 +161,8 @@ for hit in book.find_text("Sherlock Holmes", categories="all"):
     print(book.title, hit.source["href"], hit.source["start"])
 ```
 
-See [RAG and provenance](docs/RAG.md) for the recommended multi-book design.
+See [RAG and provenance](https://github.com/fontistoriche/segnatura/blob/main/docs/RAG.md)
+for the recommended multi-book design.
 
 ## Independent LLM audit: no required provider
 
@@ -273,8 +275,8 @@ Manual review can also classify an exact text range inside a mixed block;
 applying the profile then produces separate, fully cited extraction units
 without changing the EPUB.
 
-See [Edition Profiles](docs/EDITION-PROFILES.md) and
-[Classifier rules](docs/CLASSIFIER.md).
+See [Edition Profiles](https://github.com/fontistoriche/segnatura/blob/main/docs/EDITION-PROFILES.md)
+and [Classifier rules](https://github.com/fontistoriche/segnatura/blob/main/docs/CLASSIFIER.md).
 
 ## Scope and limitations
 
@@ -294,7 +296,8 @@ Segnatura bounds the number of ZIP members, decompressed member and total
 bytes, XML element count, and XML nesting depth. It also rejects unsafe member
 paths, duplicate or encrypted members, and XML entity declarations. The
 defaults can be replaced explicitly with `EpubSafetyLimits` for a trusted,
-unusually large edition. See [EPUB safety boundaries](docs/EPUB-SAFETY.md).
+unusually large edition. See
+[EPUB safety boundaries](https://github.com/fontistoriche/segnatura/blob/main/docs/EPUB-SAFETY.md).
 
 ## Contributing
 
@@ -303,4 +306,5 @@ fixture, the expected operational category, and Segnatura's evidence. New
 language rules should be accompanied by independently labelled EPUB cases.
 Contributions that improve publisher diversity are especially useful.
 
-Segnatura is released under the [MIT License](LICENSE).
+Segnatura is released under the
+[MIT License](https://github.com/fontistoriche/segnatura/blob/main/LICENSE).
