@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install package and tools
+        run: python -m pip install ".[tools]"
+      - name: Run tests
+        run: python -m unittest discover -s tests
+      - name: Check browser scripts
+        run: |
+          node --check segnatura/gold_web/static/app.js
+
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Install wheel
+        shell: pwsh
+        run: |
+          $wheel = Get-ChildItem dist\segnatura-*.whl | Select-Object -First 1
+          python -m pip install --force-reinstall $wheel.FullName
+          segnatura --version
