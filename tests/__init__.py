@@ -1,0 +1,1 @@
+"""Segnatura release tests."""

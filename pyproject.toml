@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "segnatura"
+version = "1.0.0"
+description = "Structure-aware EPUB text extraction with stable source citations"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+keywords = ["epub", "text-extraction", "rag", "citations", "ebook"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Text Processing :: Markup",
+]
+dependencies = []
+
+[project.optional-dependencies]
+tools = ["Flask>=3.0,<4"]
+
+[project.scripts]
+segnatura = "segnatura.cli:main"
+segnatura-edition-profile = "segnatura.tools_cli:edition_profile_main"
+
+[tool.setuptools.packages.find]
+include = ["segnatura*"]
+
+[tool.setuptools.package-data]
+segnatura = ["gold_web/templates/*.html", "gold_web/static/*.css", "gold_web/static/*.js"]

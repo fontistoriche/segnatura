@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Segnatura · Edition Profile</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="edition-profile-app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="identity"><strong class="brand">Segnatura</strong><span class="product-tag" data-i18n="profileTag">Edition Profile</span><span class="subtitle" data-i18n="subtitle">EPUB review</span></div>
+      <div class="top-actions">
+        <span id="save-state" class="save-state" data-i18n="savedLocal" aria-live="polite">In session</span>
+        <button id="open-llm-settings" class="llm-config-button" type="button" data-i18n="configureLlm">Configure LLM</button>
+        <button id="change-book" class="quiet home-button" type="button" data-i18n="home" hidden>Home</button>
+        <div class="language-switch" role="group" aria-label="Language">
+          <button type="button" data-locale="en" title="English" aria-label="English"><svg viewBox="0 0 60 36" aria-hidden="true"><rect width="60" height="36" fill="#123b7a"/><path d="M0 0l60 36M60 0L0 36" stroke="#fff" stroke-width="8"/><path d="M0 0l60 36M60 0L0 36" stroke="#c8102e" stroke-width="3"/><path d="M30 0v36M0 18h60" stroke="#fff" stroke-width="12"/><path d="M30 0v36M0 18h60" stroke="#c8102e" stroke-width="7"/></svg><span>EN</span></button>
+          <button type="button" data-locale="it" title="Italiano" aria-label="Italiano"><svg viewBox="0 0 60 36" aria-hidden="true"><rect width="20" height="36" fill="#009246"/><rect x="20" width="20" height="36" fill="#fff"/><rect x="40" width="20" height="36" fill="#ce2b37"/></svg><span>IT</span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="welcome" class="welcome card">
+      <p class="eyebrow" data-i18n="profileTag">Edition Profile</p>
+      <h1 data-i18n="welcomeTitle">Review Segnatura’s classification</h1>
+      <p class="welcome-principle" data-i18n="welcomeBody">Corrections apply only to this exact EPUB edition.</p>
+      <section id="edition-profile-home">
+        <label for="book-select" data-i18n="chooseBook">Choose a book</label>
+        <div class="open-row"><select id="book-select"><option value="" data-i18n="loadingBooks">Loading books…</option></select><button id="browse-epub" class="quiet" type="button" data-i18n="browseEpub">Browse EPUB…</button><button id="open-book" class="primary" data-i18n="open">Open</button></div>
+        <input id="epub-file" type="file" accept=".epub,application/epub+zip" hidden>
+        <p id="library-root" class="muted"></p><p id="welcome-error" class="error" hidden></p>
+      </section>
+      <ol class="welcome-workflow">
+        <li><span>01</span><strong data-i18n="stepBook">Open the book</strong><small data-i18n="stepBookHelp">Segnatura classifies the complete EPUB.</small></li>
+        <li><span>02</span><strong data-i18n="stepAudit">Choose how to review it</strong><small data-i18n="stepAuditHelp">Manually or with help from an LLM.</small></li>
+        <li><span>03</span><strong data-i18n="stepReview">Validate corrections</strong><small data-i18n="stepReviewHelp">Nothing changes without your decision.</small></li>
+        <li><span>04</span><strong data-i18n="stepExport">Export the profile</strong><small data-i18n="stepExportHelp">The file contains only corrections you approved.</small></li>
+      </ol>
+    </section>
+
+    <section id="workspace" class="workspace-shell" hidden>
+      <nav class="workflow-strip" aria-label="Workflow">
+        <div id="workflow-book" class="workflow-step active"><span>01</span><div><strong data-i18n="stepBook">Open the book</strong><small id="workflow-book-status"></small></div></div>
+        <div id="workflow-audit" class="workflow-step"><span>02</span><div><strong data-i18n="stepAudit">Choose a review mode</strong><small id="workflow-audit-status"></small></div></div>
+        <div id="workflow-review" class="workflow-step"><span>03</span><div><strong data-i18n="stepReview">Validate corrections</strong><small id="workflow-review-status"></small></div></div>
+        <div id="workflow-export" class="workflow-step"><span>04</span><div><strong data-i18n="stepExport">Export the profile</strong><small id="workflow-export-status"></small></div></div>
+      </nav>
+
+      <div class="workspace profile-workspace">
+        <aside class="navigator card context-panel">
+          <div class="book-heading"><div><h1 id="book-title"></h1><p id="book-meta" class="muted"></p></div></div>
+          <div class="review-mode-tabs" role="tablist"><button id="mode-llm" type="button" role="tab" class="active" data-i18n="llmMode">LLM suggestions</button><button id="mode-manual" type="button" role="tab" data-i18n="manualMode">Manual review</button></div>
+          <section id="llm-context" class="context-view"><p class="panel-kicker" data-i18n="llmSuggestionList">LLM suggestions</p><p id="llm-context-help" class="hint" data-i18n="llmContextHelp">Configure and run an LLM review. Its actionable suggestions will appear here.</p><div id="audit-findings" class="audit-findings"></div></section>
+          <section id="manual-context" class="context-view" hidden>
+            <label for="document-select" data-i18n="document">Document</label><select id="document-select"></select><div class="document-meta" id="document-meta"></div><div class="progress"><span id="progress-bar"></span></div><p id="progress-text" class="muted"></p><p class="shortcut navigator-shortcut" data-i18n="shortcut">Keys 1–6: category · arrows: previous/next block</p><ol id="block-list" class="block-list"></ol>
+            <div id="manual-correction" class="manual-editor">
+              <section class="scope document-scope"><p class="eyebrow" data-i18n="wholeDocument">Whole document</p><h2 id="annotation-document-title"></h2><p id="document-deterministic" class="deterministic-result"></p><div id="document-labels" class="labels compact"></div></section>
+              <section class="scope block-scope"><p class="eyebrow" data-i18n="highlightedBlock">Highlighted block</p><h2 id="block-heading"></h2><p id="block-deterministic" class="deterministic-result"></p><div id="block-text" class="block-text"></div>
+                <section class="range-editor"><p class="eyebrow" data-i18n="rangeTitle">Part of this block</p><p class="hint" data-i18n="rangeHelp">Select exact text, choose its category, and save the range.</p><div class="range-controls"><select id="range-category" aria-label="Range category"></select><button id="save-range" class="quiet" data-i18n="saveRange">Classify selected text</button></div><p id="range-error" class="error" hidden></p><div id="range-list" class="range-list"></div></section>
+                <button id="inherit-document" class="inherit" data-i18n="sameAsDocument">Use the document category</button><div id="block-labels" class="labels"></div><label for="annotation-note" data-i18n="optionalNote">Optional note</label><textarea id="annotation-note" rows="3"></textarea>
+              </section>
+            </div>
+          </section>
+        </aside>
+
+        <section class="reader card">
+          <div class="reader-toolbar"><div><p class="panel-kicker" data-i18n="originalPage">Original EPUB page</p><strong id="reader-location"></strong></div><div class="reader-actions"><button id="previous-block" class="quiet" data-i18n-title="previousBlock" title="Previous block">←</button><button id="next-block" class="quiet" data-i18n-title="nextBlock" title="Next block">→</button><button id="reload-page" class="quiet" data-i18n-title="reload" title="Reload">↻</button></div></div>
+          <iframe id="epub-frame" sandbox="allow-scripts" title="EPUB"></iframe>
+        </section>
+
+        <section class="annotation card review-control-bar">
+          <div class="review-status"><span class="status-dot" aria-hidden="true"></span><div><strong data-i18n="independentAudit">LLM-assisted review</strong><p id="audit-status" class="hint"></p></div></div>
+          <div id="audit-activity" class="audit-activity" role="status" aria-live="polite" hidden><span class="audit-spinner" aria-hidden="true"></span><div><strong id="audit-activity-title"></strong><small id="audit-activity-detail"></small><div class="progress audit-progress"><span id="audit-progress-bar"></span></div></div><button id="cancel-audit" class="danger" data-i18n="cancelAudit">Stop review</button></div>
+          <div class="audit-history-row"><label for="audit-history" data-i18n="reviewHistory">Review history</label><select id="audit-history"></select></div>
+          <div class="review-bar-actions"><button id="estimate-audit" class="quiet estimate-action" data-i18n="estimateAudit">Estimate calls</button><button id="start-audit" class="primary" data-i18n="startAudit" hidden>Start a new complete review</button><button id="accept-all-audit" class="quiet" data-i18n="acceptAllAudit" hidden>Accept all applicable suggestions</button><button id="export-book" class="primary export-action" data-i18n="export" disabled>Export profile</button></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="llm-dialog" class="settings-dialog" aria-labelledby="llm-dialog-title">
+    <div class="dialog-header"><div><p class="eyebrow" data-i18n="settings">Settings</p><h2 id="llm-dialog-title" data-i18n="llmSettings">LLM connection</h2></div><button id="close-llm-settings" class="quiet dialog-close" type="button" data-i18n-title="closeSettings" title="Close">×</button></div>
+    <div class="llm-settings-grid">
+      <label><span data-i18n="provider">Provider</span><select id="llm-provider"><option value="lm_studio">LM Studio</option><option value="openai_compatible">OpenAI-compatible API</option></select></label>
+      <label><span data-i18n="baseUrl">API base URL</span><input id="llm-base-url" type="url" value="http://localhost:1234/v1" autocomplete="off"></label>
+      <label><span data-i18n="apiKey">API key</span><input id="llm-api-key" type="password" autocomplete="off"></label>
+      <div class="model-discovery-action"><button id="load-llm-models" class="quiet" type="button" data-i18n="loadModels">Connect and load models</button></div>
+      <label class="model-field"><span data-i18n="model">Model</span><input id="llm-model" type="text" list="llm-model-options" autocomplete="off" placeholder="google/gemma-4-26b-a4b"><datalist id="llm-model-options"></datalist></label>
+    </div>
+    <p id="llm-connection-status" class="connection-status hint" role="status" aria-live="polite"></p>
+    <details class="llm-advanced"><summary data-i18n="advancedOptions">Advanced options</summary><div class="llm-settings-grid">
+      <label><span data-i18n="timeout">Timeout per call</span><input id="llm-timeout" type="number" min="1" value="900"></label>
+      <label><span data-i18n="reasoningEffort">Reasoning effort</span><input id="llm-reasoning" type="text" autocomplete="off" placeholder="optional"></label>
+    </div></details>
+    <p class="hint privacy-hint" data-i18n="apiPrivacy">A remote provider receives EPUB excerpts. The API key and review state stay only in this running app.</p><div class="dialog-actions"><button id="cancel-llm-settings" class="quiet" type="button" data-i18n="cancel">Cancel</button><button id="test-llm-config" class="quiet" type="button" data-i18n="testConfiguration">Test configuration</button><button id="save-llm-config" class="primary" type="button" data-i18n="useConfiguration">Use this configuration</button></div>
+  </dialog>
+  <script src="/static/app.js"></script>
+</body>
+</html>
