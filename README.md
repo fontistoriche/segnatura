@@ -278,12 +278,17 @@ See [Edition Profiles](docs/EDITION-PROFILES.md) and
 
 ## Scope and limitations
 
+- Segnatura can process EPUBs in any language because structural extraction is
+  language-independent. Lexical classification rules are strongest for Italian
+  and English, with partial support for French, German, and Spanish; other
+  languages may require an Edition Profile or LLM-assisted review.
 - Segnatura classifies editorial function; it is not an EPUB renderer, OCR
   engine, vector database, embedding model, or complete RAG application.
 - Exact source attribution is guaranteed only while the EPUB fingerprint and
   referenced source fragments still match.
 - Image-only pages require OCR outside Segnatura.
-- Malformed or unusually generated EPUB files can still require an Edition Profile.
+- Malformed or unusually generated EPUB files can still require an Edition
+  Profile.
 
 Segnatura bounds the number of ZIP members, decompressed member and total
 bytes, XML element count, and XML nesting depth. It also rejects unsafe member
