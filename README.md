@@ -111,29 +111,9 @@ book = extract("book.epub", edition_profile="book.segnatura.json")
 Segnatura was evaluated in two separate controlled experiments on Italian
 corpora.
 
-**Classification accuracy.** One hundred blocks from ten EPUB files were
-labelled by hand against the rendered original, with Segnatura's prediction
-hidden during annotation. The production category matched the human label in
-45 of 50 random-audit cases and 48 of 50 targeted challenge cases: 93 of 100
-overall, with 99.65% character-weighted accuracy. The targeted cases were
-deliberately difficult, so the combined result is a regression benchmark on a
-limited set of Italian EPUBs and publishers, not an estimate for every EPUB.
+**Classification accuracy.** 100 blocks from 10 EPUB files were labelled by hand against the rendered original, with Segnatura's prediction hidden during annotation. The production category matched the human label in 45 of 50 random-audit cases and 48 of 50 targeted challenge cases: 93 of 100 overall, with 99.65% character-weighted accuracy. The targeted cases were deliberately difficult, so the combined result is a regression benchmark on a limited set of Italian EPUBs and publishers, not an estimate for every EPUB.
 
-**Effect on retrieval.** The full evaluation used 50 EPUB files and 300
-questions: 240 local questions, 30 questions requiring sources from different
-parts of the corpus, and 30 negative controls. Both indexes were configured to
-search work text only. The document-level baseline already excluded entire
-files identified as front matter, contents, indexes, or bibliographies, but
-could not separate different editorial functions within the same document.
-Segnatura produced a cleaner work-text extraction by identifying notes,
-bibliographies, indexes, and paratext that the baseline would have mixed into
-the work text, while preserving that material under separate editorial
-categories. With identical fixed chunking, embedding, and retrieval settings,
-the resulting work-text index contained 5.61% fewer searchable records and
-6.33% fewer indexed tokens. Across the 240 local questions, no paired
-difference in retrieval of the registered sources was statistically significant
-at the conventional 0.05 level. These results establish a cleaner, smaller
-work-text index at unchanged retrieval quality on this corpus.
+**Effect on retrieval.** The full evaluation used 50 EPUB files and 300 questions: 240 local questions, 30 questions requiring sources from different parts of the corpus, and 30 negative controls. Both search indexes were configured to search work text only. The document-level baseline already excluded entire files identified as front matter, contents, indexes, or bibliographies, but could not separate different editorial functions within the same document. Segnatura produced a cleaner work-text extraction by identifying notes, bibliographies, indexes, and paratext that the baseline would have mixed into the work text, while preserving that material under separate editorial categories. With identical fixed chunking, embedding, and retrieval settings, the resulting work-text index contained 5.61% fewer searchable records and 6.33% fewer indexed tokens across the corpus. Across the 240 local questions, no paired difference in retrieval of the registered sources was statistically significant at the conventional 0.05 level. These results establish a cleaner, smaller work-text index with no measurable loss in retrieval quality on this corpus.
 
 
 ## Command line
