@@ -5,7 +5,17 @@ import re
 import zipfile
 from dataclasses import dataclass
 from pathlib import PurePosixPath
+from urllib.parse import unquote, urlsplit
+from xml.etree import ElementTree as ET
 from xml.parsers import expat
+
+
+EPUB_ENCRYPTION_PATH = "META-INF/encryption.xml"
+FONT_OBFUSCATION_ALGORITHMS = frozenset({
+    "http://www.idpf.org/2008/embedding",
+    "http://ns.adobe.com/pdf/enc#RC",
+})
+FONT_EXTENSIONS = frozenset({".otf", ".ttf", ".woff", ".woff2"})
 
 
 @dataclass(frozen=True)
@@ -150,3 +160,49 @@ class SafeEpubArchive:
             # Container, OPF, and NCX parsing still fail explicitly at their
             # call sites because those documents have no safe lexical fallback.
             return
+
+
+def _local_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
+
+
+def _child(element: ET.Element, name: str) -> ET.Element | None:
+    return next((child for child in element.iter()
+                 if _local_name(child.tag) == name), None)
+
+
+def _short(value: str, limit: int = 200) -> str:
+    return value if len(value) <= limit else value[:limit] + "..."
+
+
+def _is_standard_font_obfuscation(algorithm: str, uri: str) -> bool:
+    if algorithm not in FONT_OBFUSCATION_ALGORITHMS or not uri:
+        return False
+    path = unquote(urlsplit(uri).path)
+    return PurePosixPath(path).suffix.casefold() in FONT_EXTENSIONS
+
+
+def validate_publication_encryption(archive: SafeEpubArchive) -> None:
+    """Reject encrypted publication resources but allow obfuscated fonts."""
+    if EPUB_ENCRYPTION_PATH not in archive.names():
+        return
+    try:
+        root = ET.fromstring(archive.read(EPUB_ENCRYPTION_PATH, xml=True))
+    except ET.ParseError as error:
+        raise EpubSafetyError(
+            f"invalid {EPUB_ENCRYPTION_PATH}: {error}") from error
+
+    for encrypted_data in root.iter():
+        if _local_name(encrypted_data.tag) != "EncryptedData":
+            continue
+        method = _child(encrypted_data, "EncryptionMethod")
+        reference = _child(encrypted_data, "CipherReference")
+        algorithm = "" if method is None else method.get("Algorithm", "")
+        uri = "" if reference is None else reference.get("URI", "")
+        if _is_standard_font_obfuscation(algorithm, uri):
+            continue
+        resource = _short(uri) if uri else "unknown resource"
+        method_name = _short(algorithm) if algorithm else "unknown algorithm"
+        raise EpubSafetyError(
+            "EPUB contains encrypted publication content that Segnatura "
+            f"cannot extract: {resource!r} ({method_name})")
