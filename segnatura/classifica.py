@@ -1,19 +1,4 @@
-"""Mette insieme i voti dei segnali e produce ruolo, confidenza, prove.
 
-Le tre proprieta' che distinguono questo da un mucchio di euristiche dentro un
-`if`, e che sono il motivo per cui vale la pena farne una libreria:
-
-1. **la decisione porta con se' il perche'** — `prove` elenca i segnali che hanno
-   votato, in parole leggibili. Si puo' sempre chiedere «perche' hai deciso
-   cosi'?» e ottenere una risposta;
-2. **la confidenza e' dichiarata**, quindi si sa dove non fidarsi. Sotto una
-   soglia il ruolo diventa `incerto`, che e' un'informazione, non un fallimento;
-3. **la correzione umana vince su tutto** e resta: `override` ha peso infinito.
-
-Nessun segnale decide da solo. E' misurato: `epub:type` compare nel 4% dei libri
-veri, il grafo dei link riconosce le note in circa un terzo, il vocabolario tace
-quando il titolo manca.
-"""
 from __future__ import annotations
 
 from collections import defaultdict
