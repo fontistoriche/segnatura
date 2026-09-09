@@ -27,6 +27,11 @@ Segnatura also rejects:
 - encrypted ZIP members;
 - XML documents containing entity declarations.
 
+Segnatura inspects `META-INF/encryption.xml` before reading publication
+content. Standard IDPF and Adobe font obfuscation is accepted for font files.
+Other encrypted publication resources produce an explicit extraction error;
+Segnatura does not decrypt or bypass DRM-protected content.
+
 XML element count and nesting depth are checked by a streaming parser, before
 any DOM tree is constructed. Malformed XHTML may still use the existing
 bounded lexical fallback. The container, OPF package document, and NCX have no
