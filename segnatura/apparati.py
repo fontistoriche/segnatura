@@ -1,10 +1,4 @@
-"""Deterministic operational categories used by extraction and Edition Profiles.
 
-The editorial classifier retains its fine-grained internal roles. This module
-maps those roles to the five operational categories exposed by the extraction
-API. Optional LLM review deliberately lives in :mod:`segnatura.audit` and
-never participates in this production path.
-"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
