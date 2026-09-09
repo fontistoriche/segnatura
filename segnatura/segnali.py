@@ -1,14 +1,4 @@
-"""I segnali. Ognuno guarda una cosa sola e vota, con un peso e una prova.
 
-Nessuno decide da solo: e' misurato che nessuno basta. Su 109 libri veri,
-`epub:type` compare nel 4% e il grafo dei link riconosce le note in circa un
-terzo. Il vocabolario dei titoli copre molto ma dipende dalla lingua e tace
-quando il titolo manca. Sommandoli si arriva lontano; presi uno per uno, no.
-
-Ogni segnale restituisce una lista di `Voto(sezione_href, ruolo, peso, prova)`.
-`classifica.py` li somma. La `prova` e' una stringa leggibile, e serve a poter
-sempre rispondere alla domanda «perche' hai deciso cosi'?».
-"""
 from __future__ import annotations
 
 import re
@@ -27,14 +17,7 @@ class Voto:
     peso: float
     prova: str
     conferma: bool = False
-    """Un voto di sola CONFERMA rafforza un ruolo gia' sostenuto da altro, ma non
-    puo' stabilirlo da solo.
 
-    Serve perche' la posizione, presa sul serio, fa danni: alla prima prova 197
-    sezioni erano state dichiarate «bibliografia» solo perche' stavano in fondo al
-    libro — cioe' gli ultimi capitoli di ogni volume, 1,6 milioni di caratteri,
-    buttati fuori dall'indice. «In fondo» c'e' la bibliografia, ma c'e' anche
-    l'ultimo capitolo."""
 
 
 # ---------------------------------------------------------------------------
@@ -243,7 +226,7 @@ def da_grafo(libro: Libro) -> list[Voto]:
 
 
 # ---------------------------------------------------------------------------
-# 3. Il titolo. Banale, e quando c'e' e' il segnale piu' forte.
+# 3. Il titolo. Quando c'e' e' il segnale piu' forte.
 # ---------------------------------------------------------------------------
 def da_titolo(libro: Libro) -> list[Voto]:
     voti = []
