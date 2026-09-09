@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 — 2026-09-09
+
+- Detect encrypted publication resources declared in
+  `META-INF/encryption.xml` and fail with an explicit extraction error instead
+  of interpreting ciphertext as text.
+- Continue to accept standard IDPF and Adobe font obfuscation while rejecting
+  attempts to use those algorithms for non-font resources.
+
 ## 1.0.0 — 2026-09-01
 
 - Added deterministic, structure-aware EPUB extraction with the public
