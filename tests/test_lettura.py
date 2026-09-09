@@ -36,7 +36,85 @@ def _scrivi_epub(percorso: Path, metadata: str, corpo: str | None = None,
             z.writestr(nome, contenuto)
 
 
+def _encryption_xml(algorithm: str, uri: str) -> str:
+    return f'''<?xml version="1.0" encoding="utf-8"?>
+        <encryption xmlns="urn:oasis:names:tc:opendocument:xmlns:container"
+          xmlns:enc="http://www.w3.org/2001/04/xmlenc#">
+          <enc:EncryptedData>
+            <enc:EncryptionMethod Algorithm="{algorithm}"/>
+            <enc:CipherData><enc:CipherReference URI="{uri}"/></enc:CipherData>
+          </enc:EncryptedData>
+        </encryption>'''
+
+
 class LetturaTest(unittest.TestCase):
+    def test_rejects_encrypted_publication_content_explicitly(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            epub = Path(tmp) / "encrypted.epub"
+            _scrivi_epub(epub, "", extra={
+                "META-INF/encryption.xml": _encryption_xml(
+                    "http://www.w3.org/2001/04/xmlenc#aes128-cbc",
+                    "OEBPS/chapter.xhtml"),
+            })
+
+            libro = leggi(epub)
+
+            self.assertIn("encrypted publication content", libro.errore or "")
+            self.assertIn("OEBPS/chapter.xhtml", libro.errore or "")
+            self.assertEqual([], libro.sezioni)
+            with self.assertRaisesRegex(
+                    EpubExtractionError, "encrypted publication content"):
+                extract(epub)
+
+    def test_allows_standard_font_obfuscation(self):
+        algorithms = (
+            "http://www.idpf.org/2008/embedding",
+            "http://ns.adobe.com/pdf/enc#RC",
+        )
+        for algorithm in algorithms:
+            with (
+                self.subTest(algorithm=algorithm),
+                tempfile.TemporaryDirectory() as tmp,
+            ):
+                epub = Path(tmp) / "obfuscated-font.epub"
+                _scrivi_epub(epub, "", extra={
+                    "META-INF/encryption.xml": _encryption_xml(
+                        algorithm, "OEBPS/fonts/book.ttf"),
+                    "OEBPS/fonts/book.ttf": b"obfuscated font bytes",
+                })
+
+                libro = leggi(epub)
+
+                self.assertIsNone(libro.errore)
+                self.assertEqual(1, len(libro.sezioni))
+                self.assertIn("Readable work text", libro.sezioni[0].testo)
+
+    def test_font_obfuscation_algorithm_cannot_hide_xhtml(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            epub = Path(tmp) / "invalid-font-obfuscation.epub"
+            _scrivi_epub(epub, "", extra={
+                "META-INF/encryption.xml": _encryption_xml(
+                    "http://www.idpf.org/2008/embedding",
+                    "OEBPS/chapter.xhtml"),
+            })
+
+            libro = leggi(epub)
+
+            self.assertIn("encrypted publication content", libro.errore or "")
+            self.assertEqual([], libro.sezioni)
+
+    def test_rejects_malformed_encryption_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            epub = Path(tmp) / "malformed-encryption.epub"
+            _scrivi_epub(epub, "", extra={
+                "META-INF/encryption.xml": "<encryption>",
+            })
+
+            libro = leggi(epub)
+
+            self.assertIn("invalid META-INF/encryption.xml", libro.errore or "")
+            self.assertEqual([], libro.sezioni)
+
     def test_publication_date_rejects_placeholder_years(self):
         self.assertIsNone(_normalizza_data_pubblicazione(
             "0101-01-01T00:00:00+00:00"))
