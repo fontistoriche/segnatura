@@ -1,17 +1,4 @@
-"""I ruoli riconoscibili, e il vocabolario per riconoscerli dal titolo.
 
-Il vocabolario e' il segnale piu' banale e, quando c'e', il piu' forte: se
-l'intestazione dice «Bibliografia», e' bibliografia. Sta qui invece che sparso
-nel codice perche' aggiungere una lingua dev'essere una voce in piu' in un
-dizionario, non una modifica al classificatore.
-
-Due regole imparate a caro prezzo, e da non violare:
-
-1. **confronto per parola, mai per sottostringa.** `toc` dentro `ottocento`,
-   `dedica` dentro `dedicato`. E' il bug che ha colpito sia Sibilla sia Archilles.
-2. **prefazione, introduzione e postfazione NON sono apparato.** Sono testo
-   d'autore, spesso il piu' denso del libro. Hanno un ruolo proprio.
-"""
 from __future__ import annotations
 
 import re
