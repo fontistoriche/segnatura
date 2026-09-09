@@ -1,12 +1,3 @@
-"""Apertura di un EPUB: spine, documenti, testo. Nessuna interpretazione.
-
-Qui dentro non si decide niente su cosa una sezione *sia* — si legge e basta.
-L'interpretazione sta in `segnali.py` e `classifica.py`, e tenerle separate serve
-a poter provare i segnali uno per uno senza rileggere gli zip ogni volta.
-
-Non si usa `ebooklib`: serve accesso ai byte grezzi degli XHTML per cercare
-`epub:type`, gli `id` e i link, che ebooklib non espone.
-"""
 from __future__ import annotations
 
 import hashlib
@@ -20,7 +11,7 @@ from xml.etree import ElementTree as ET
 
 from .blocchi import Blocco, estrai_blocchi
 from .epub_safety import (EpubSafetyError, EpubSafetyLimits,
-                          SafeEpubArchive)
+                          SafeEpubArchive, validate_publication_encryption)
 
 RE_TAG = re.compile(rb"<[^>]+>")
 RE_A = re.compile(rb'<a\b[^>]*href\s*=\s*["\']([^"\']+)["\']', re.I)
@@ -544,6 +535,7 @@ def leggi(percorso: Path | str, *,
     with z:
         try:
             archivio = SafeEpubArchive(z, limiti_sicurezza)
+            validate_publication_encryption(archivio)
         except EpubSafetyError as e:
             return _fallimento_sicurezza(libro, e)
         try:
