@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "segnatura"
-version = "1.0.0"
+version = "1.0.1"
 description = "Structure-aware EPUB text extraction with stable source citations"
 readme = "README.md"
 license = "MIT"
