@@ -111,10 +111,52 @@ book = extract("book.epub", edition_profile="book.segnatura.json")
 Segnatura was evaluated in two separate controlled experiments on Italian
 corpora.
 
-**Classification accuracy.** 100 blocks from 10 EPUB files were labelled by hand against the rendered original, with Segnatura's prediction hidden during annotation. The production category matched the human label in 45 of 50 random-audit cases and 48 of 50 targeted challenge cases: 93 of 100 overall, with 99.65% character-weighted accuracy. The targeted cases were deliberately difficult, so the combined result is a regression benchmark on a limited set of Italian EPUBs and publishers, not an estimate for every EPUB.
+**Classification accuracy.** One hundred blocks from ten EPUB files were
+labelled by hand against the rendered original, with Segnatura's prediction
+hidden during annotation. The production category matched the human label in
+45 of 50 random-audit cases and 48 of 50 targeted challenge cases: 93 of 100
+overall, with 99.65% character-weighted accuracy. The targeted cases were
+deliberately difficult, so the combined result is a regression benchmark on a
+limited set of Italian EPUBs and publishers, not an estimate for every EPUB.
 
-**Effect on retrieval.** The full evaluation used 50 EPUB files and 300 questions: 240 local questions, 30 questions requiring sources from different parts of the corpus, and 30 negative controls. Both search indexes were configured to search work text only. The document-level baseline already excluded entire files identified as front matter, contents, indexes, or bibliographies, but could not separate different editorial functions within the same document. Segnatura produced a cleaner work-text extraction by identifying notes, bibliographies, indexes, and paratext that the baseline would have mixed into the work text, while preserving that material under separate editorial categories. With identical fixed chunking, embedding, and retrieval settings, the resulting work-text index contained 5.61% fewer searchable records and 6.33% fewer indexed tokens across the corpus. Across the 240 local questions, no paired difference in retrieval of the registered sources was statistically significant at the conventional 0.05 level. These results establish a cleaner, smaller work-text index with no measurable loss in retrieval quality on this corpus.
+**Effect on work-text retrieval.** The retrieval benchmark used 50 EPUB files
+and 300 questions: 150 ordinary questions and 150 short editorial-collision
+questions. These short questions targeted terms appearing both in the work text
+and in notes, bibliographies, indexes, or paratext, where editorial material
+could compete with passages that actually answered the question.
 
+The experiment compared Segnatura with a document-level baseline that could
+exclude complete editorial documents but could not separate different functions
+within the same document. Both indexes used identical fixed chunking, embeddings,
+and exact vector search. Their pooled top-six passages were evaluated using a
+fixed rubric by a language-model judge blind to system identity, rank, and
+score. Confidence intervals were calculated by bootstrapping books.
+
+On the editorial-collision questions, Segnatura retrieved the registered answer
+source within the first six results in 74.15% of cases, compared with 68.71% for
+the baseline: a gain of 5.44 percentage points (95% CI: +1.36 to +10.20).
+Answer-bearing or concretely useful passages increased from 51.47% to 55.10%
+(+3.63 points; 95% CI: +1.81 to +5.78).
+
+The share of queries with at least one apparatus-only passage among the first
+six results fell from 48.30% to 29.25% (-19.05 points; 95% CI: -26.53 to
+-11.56). Across all retrieved positions, apparatus-only passages fell from
+13.38% to 6.58% (-6.80 points; 95% CI: -9.86 to -4.08).
+
+On the ordinary questions, registered-source retrieval remained substantially
+unchanged at 92.67% for the baseline and 92.00% for Segnatura. Apparatus-only
+passages fell from 6.00% to 4.11%, while answer-bearing or useful passages rose
+from 77.11% to 79.00%.
+
+Segnatura achieved these results with a smaller work-text index. Separating
+editorial apparatus reduced searchable work-text records by 5.61% and indexed
+work-text tokens by 6.33%, while preserving ordinary retrieval performance and
+improving results on editorial-collision questions. The separated material
+remained available under its own editorial categories.
+
+These results support a cleaner and more effective work-text index on this
+Italian corpus. They do not imply better retrieval for every EPUB, language,
+query formulation, embedding model, or retrieval system.
 
 ## Command line
 
@@ -301,6 +343,11 @@ and [Classifier rules](https://github.com/fontistoriche/segnatura/blob/main/docs
 - Image-only pages require OCR outside Segnatura.
 - Malformed or unusually generated EPUB files can still require an Edition
   Profile.
+
+Segnatura checks `META-INF/encryption.xml` before extracting publication
+content. Standard font obfuscation is accepted, while encrypted or DRM-protected
+publication resources produce an explicit error instead of unreadable output.
+Segnatura does not decrypt or bypass protected content.
 
 Segnatura bounds the number of ZIP members, decompressed member and total
 bytes, XML element count, and XML nesting depth. It also rejects unsafe member
